@@ -1,74 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTA Update</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub File Uploader</title>
 </head>
 <body>
-    <h1>OTA Update</h1>
 
-    <form id="uploadForm" enctype="multipart/form-data">
-        <label for="firmware">Choose Firmware File:</label>
-        <input type="file" id="firmware" name="firmware" accept=".bin">
-        <button type="button" onclick="uploadFirmware()">Upload Firmware</button>
-    </form>
+  <h1>GitHub File Uploader</h1>
 
-    <br>
+  <input type="file" id="fileInput" />
+  <button onclick="uploadFile()">Upload</button>
 
-    <button type="button" onclick="triggerUpdate()">Trigger Update</button>
+  <script>
+    async function uploadFile() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
 
-    <script>
-        function uploadFirmware() {
-            var formData = new FormData(document.getElementById('uploadForm'));
+      if (!file) {
+        alert('Please select a file.');
+        return;
+      }
 
-            fetch('https://api.github.com/repos/whaleseai7/tel-home/releases/latest', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                var uploadUrl = data.upload_url.replace('{?name,label}', '');
+      const token = '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';
+      const repoOwner = 'whaleseai7';
+      const repoName = 'tel-home';
+      const branch = 'main'; // or your preferred branch
 
-                fetch(uploadUrl + '?name=firmware.bin', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': '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', // Replace with your GitHub token
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Firmware uploaded successfully:', data);
-                    alert('Firmware uploaded successfully!');
-                })
-                .catch(error => {
-                    console.error('Error uploading firmware:', error);
-                    alert('Error uploading firmware. Please check the console for details.');
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching GitHub release:', error);
-                alert('Error fetching GitHub release. Please check the console for details.');
-            });
+      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${file.name}`;
+
+      const content = await file.text();
+      const contentBase64 = btoa(content);
+
+      const data = {
+        message: `Upload ${file.name}`,
+        content: contentBase64,
+        branch: branch
+      };
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            Authorization: `token ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          alert('File uploaded successfully!');
+        } else {
+          const errorData = await response.json();
+          alert(`Error: ${errorData.message}`);
         }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred during file upload.');
+      }
+    }
+  </script>
 
-        function triggerUpdate() {
-            fetch('https://whaleseai7.github.io/tel-home/firmware.json', {
-                method: 'GET'
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Triggering firmware update:', data);
-                alert('Triggering firmware update!');
-            })
-            .catch(error => {
-                console.error('Error fetching firmware details:', error);
-                alert('Error fetching firmware details. Please check the console for details.');
-            });
-        }
-    </script>
 </body>
 </html>
