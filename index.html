@@ -22,7 +22,7 @@
         function uploadFirmware() {
             var formData = new FormData(document.getElementById('uploadForm'));
 
-            fetch('https://api.github.com/repos/your-username/your-repo/releases/latest', {
+            fetch('https://api.github.com/repos/whaleseai7/tel-home/releases/latest', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/vnd.github.v3+json'
@@ -35,7 +35,7 @@
                 fetch(uploadUrl + '?name=firmware.bin', {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer YOUR_GITHUB_TOKEN', // Replace with your GitHub token
+                        'Authorization': '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', // Replace with your GitHub token
                     },
                     body: formData
                 })
