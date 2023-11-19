@@ -9,36 +9,46 @@
 
   <h1>GitHub File Uploader</h1>
 
-  <input type="file" id="fileInput" />
+  <input type="file" id="fileInput" style="display: none" />
+  <button onclick="selectFile()">Select File</button>
   <button onclick="uploadFile()">Upload</button>
+  <progress id="uploadProgress" value="0" max="100"></progress>
 
   <script>
-    async function uploadFile() {
-      const fileInput = document.getElementById('fileInput');
-      const file = fileInput.files[0];
+    let selectedFile;
 
-      if (!file) {
+    function selectFile() {
+      const fileInput = document.getElementById('fileInput');
+      fileInput.click();
+
+      fileInput.addEventListener('change', () => {
+        selectedFile = fileInput.files[0];
+      });
+    }
+
+    async function uploadFile() {
+      if (!selectedFile) {
         alert('Please select a file.');
         return;
       }
 
-      const token = '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';
-      const repoOwner = 'whaleseai7';
-      const repoName = 'tel-home';
+      const token = 'YOUR_GITHUB_TOKEN';
+      const repoOwner = 'YOUR_GITHUB_USERNAME';
+      const repoName = 'YOUR_REPO_NAME';
       const branch = 'main'; // or your preferred branch
 
-      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${file.name}`;
-
-      const content = await file.text();
-      const contentBase64 = btoa(content);
-
-      const data = {
-        message: `Upload ${file.name}`,
-        content: contentBase64,
-        branch: branch
-      };
+      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${selectedFile.name}`;
 
       try {
+        const content = await readFileContent(selectedFile);
+        const contentBase64 = btoa(content);
+
+        const data = {
+          message: `Upload ${selectedFile.name}`,
+          content: contentBase64,
+          branch: branch
+        };
+
         const response = await fetch(apiUrl, {
           method: 'PUT',
           headers: {
@@ -58,6 +68,19 @@
         console.error('Error:', error);
         alert('An error occurred during file upload.');
       }
+    }
+
+    async function readFileContent(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+
+        reader.onerror = reject;
+        reader.readAsText(file);
+      });
     }
   </script>
 
