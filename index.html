@@ -41,7 +41,8 @@
 
       try {
         const content = await readFileContent(selectedFile);
-        const contentBase64 = btoa(content);
+        const cleanedContent = cleanUpContent(content);
+        const contentBase64 = btoa(cleanedContent);
 
         const data = {
           message: `Upload ${selectedFile.name}`,
@@ -81,6 +82,13 @@
         reader.onerror = reject;
         reader.readAsText(file);
       });
+    }
+
+    function cleanUpContent(content) {
+      // Menghapus karakter yang tidak valid atau tidak diizinkan
+      // Sesuaikan sesuai kebutuhan Anda
+      const cleanedContent = content.replace(/[^\x00-\x7F]/g, "");
+      return cleanedContent;
     }
   </script>
 
