@@ -31,7 +31,7 @@ function uploadToGitHub(fileName, content) {
         },
         body: JSON.stringify({
             message: `Upload ${fileName}`,
-            content: btoa(String.fromCharCode.apply(null, new Uint8Array(content))),
+            content: btoa(String.fromCharCode.apply(null, new Uint8Array(content.slice()))),
             branch: branchName,
         }),
     };
