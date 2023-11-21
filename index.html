@@ -14,7 +14,7 @@
 <body>
     <h1>Unggah Firmware</h1>
     <input type="file" id="firmwareInput" accept=".bin">
-    <button onclick="uploadFirmware()">Unggah</button>
+    <button onclick="uploadFirmware()">Unggah1</button>
     <p id="status"></p>
 
     <script>
@@ -26,16 +26,16 @@
                 var formData = new FormData();
                 formData.append('file', file);
 
-                fetch('https://api.github.com/repos/USERNAME/REPO_NAME/contents/firmware.bin', {
+                fetch('https://api.github.com/repos/whaleseai7/tel-home/contents/firmware.bin', {
                     method: 'PUT',
                     headers: {
-                        'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+                        'Authorization': 'Bearer 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',
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         message: 'Upload firmware',
                         committer: {
-                            name: 'Your Name',
+                            name: 'Your-Name',
                             email: 'your.email@example.com'
                         },
                         content: btoa(unescape(encodeURIComponent(file))),
