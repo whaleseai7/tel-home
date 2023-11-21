@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <h1>Unggah Firmware</h1>
+    <h1>Unggah Firmware10</h1>
     <input type="file" id="firmwareInput" accept=".bin">
     <button onclick="uploadFirmware()">Unggah2</button>
     <p id="status"></p>
@@ -29,7 +29,7 @@
                 fetch('https://api.github.com/repos/whaleseai7/tel-home/contents/firmware.bin', {
                     method: 'PUT',
                     headers: {
-                        'Authorization': 'Bearer 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',
+                        'Authorization': 'Bearer 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',
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
