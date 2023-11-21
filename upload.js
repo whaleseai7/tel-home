@@ -5,11 +5,11 @@ function uploadFile() {
     if (file) {
         const reader = new FileReader();
         reader.onload = function (event) {
-            const content = event.target.result;
+            const content = event.target.result.split(',')[1]; // Ambil bagian data base64
             uploadToGitHub(file.name, content);
         };
 
-        reader.readAsArrayBuffer(file);
+        reader.readAsDataURL(file);
     } else {
         alert('Pilih file terlebih dahulu.');
     }
@@ -23,8 +23,6 @@ async function uploadToGitHub(fileName, content) {
 
     const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${fileName}`;
 
-    const base64Content = btoa(String.fromCharCode.apply(null, new Uint8Array(content)));
-
     const requestOptions = {
         method: 'PUT',
         headers: {
@@ -33,7 +31,7 @@ async function uploadToGitHub(fileName, content) {
         },
         body: JSON.stringify({
             message: `Upload ${fileName}`,
-            content: base64Content,
+            content: content,
             branch: branchName,
         }),
     };
