@@ -3,94 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GitHub File Uploader1</title>
+  <title>GitHub File Upload</title>
 </head>
 <body>
-
-  <h1>GitHub File Uploader</h1>
-
-  <input type="file" id="fileInput" style="display: none" />
-  <button onclick="selectFile()">Select File</button>
-  <button onclick="uploadFile()">Upload</button>
-  <progress id="uploadProgress" value="0" max="100"></progress>
+  <input type="file" id="fileInput" />
+  <button onclick="uploadFile()">Upload File1</button>
 
   <script>
-    let selectedFile;
-
-    function selectFile() {
+    function uploadFile() {
       const fileInput = document.getElementById('fileInput');
-      fileInput.click();
+      const file = fileInput.files[0];
 
-      fileInput.addEventListener('change', () => {
-        selectedFile = fileInput.files[0];
-      });
-    }
+      if (file) {
+        const apiUrl = 'https://github.com/whaleseai7/tel-home.git';
+        const token = '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'; // Replace with your GitHub token
 
-    async function uploadFile() {
-      if (!selectedFile) {
-        alert('Please select a file.');
-        return;
-      }
-
-      const token = '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';
-      const repoOwner = 'whaleseai7';
-      const repoName = 'tel-home';
-      const branch = 'main'; // or your preferred branch
-
-      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${selectedFile.name}`;
-
-      try {
-        const content = await readFileContent(selectedFile);
-        const cleanedContent = cleanUpContent(content);
-        const contentBase64 = btoa(cleanedContent);
-
-        const data = {
-          message: `Upload ${selectedFile.name}`,
-          content: contentBase64,
-          branch: branch
-        };
-
-        const response = await fetch(apiUrl, {
-          method: 'PUT',
-          headers: {
-            Authorization: `token ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        });
-
-        if (response.ok) {
-          alert('File uploaded successfully!');
-        } else {
-          const errorData = await response.json();
-          alert(`Error: ${errorData.message}`);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred during file upload.');
-      }
-    }
-
-    async function readFileContent(file) {
-      return new Promise((resolve, reject) => {
         const reader = new FileReader();
+        reader.onload = function (event) {
+          const content = event.target.result;
 
-        reader.onload = () => {
-          resolve(reader.result);
+          fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: 'Upload new file',
+              content: btoa(content), // Encode content in base64
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('File uploaded successfully:', data);
+          })
+          .catch(error => {
+            console.error('Error uploading file:', error);
+          });
         };
 
-        reader.onerror = reject;
         reader.readAsText(file);
-      });
-    }
-
-    function cleanUpContent(content) {
-      // Menghapus karakter yang tidak valid atau tidak diizinkan
-      // Sesuaikan sesuai kebutuhan Anda
-      const cleanedContent = content.replace(/[^\x00-\x7F]/g, "");
-      return cleanedContent;
+      } else {
+        console.error('No file selected.');
+      }
     }
   </script>
-
 </body>
 </html>
