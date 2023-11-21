@@ -23,18 +23,42 @@ function uploadToGitHub(fileName, content) {
 
     const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${fileName}`;
 
-    const requestOptions = {
-        method: 'PUT',
-        headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/vnd.github.v3+json',
-        },
-        body: JSON.stringify({
-            message: `Upload ${fileName}`,
-            content: btoa(String.fromCharCode.apply(null, new Uint8Array(content.slice()))),
-            branch: branchName,
-        }),
+    const blob = new Blob([content]);
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        const dataUrl = event.target.result;
+        const base64Data = dataUrl.split(',')[1]; // Ambil bagian data base64
+        performUpload(fileName, base64Data);
     };
+
+    reader.readAsDataURL(blob);
+
+    function performUpload(fileName, base64Data) {
+        const requestOptions = {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: 'application/vnd.github.v3+json',
+            },
+            body: JSON.stringify({
+                message: `Upload ${fileName}`,
+                content: base64Data,
+                branch: branchName,
+            }),
+        };
+
+        fetch(apiUrl, requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('File berhasil diunggah:', data);
+                alert('File berhasil diunggah!');
+            })
+            .catch(error => {
+                console.error('Gagal mengunggah file:', error);
+                alert('Gagal mengunggah file. Silakan coba lagi.');
+            });
+    }
+}
 
     fetch(apiUrl, requestOptions)
         .then(response => response.json())
