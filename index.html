@@ -21,17 +21,16 @@
         const reader = new FileReader();
         reader.onload = function (event) {
           const content = event.target.result;
+          
+          const formData = new FormData();
+          formData.append('file', new Blob([content], { type: file.type }));
 
           fetch(apiUrl, {
             method: 'PUT',
             headers: {
               'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-              message: 'Upload new file',
-              content: btoa(content), // Encode content in base64
-            }),
+            body: formData,
           })
           .then(response => response.json())
           .then(data => {
@@ -42,7 +41,7 @@
           });
         };
 
-        reader.readAsText(file);
+        reader.readAsArrayBuffer(file);
       } else {
         console.error('No file selected.');
       }
