@@ -3,58 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unggah Firmware</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-    </style>
+    <title>Unggah File .bin</title>
 </head>
 <body>
-    <h1>Unggah Firmware10</h1>
-    <input type="file" id="firmwareInput" accept=".bin">
-    <button onclick="uploadFirmware()">Unggah2</button>
-    <p id="status"></p>
+    <h1>Unggah File .bin</h1>
+    <form id="uploadForm">
+        <label for="fileInput">Pilih file .bin:</label>
+        <input type="file" id="fileInput" accept=".bin" required>
+        <button type="button" onclick="uploadFile()">Unggah</button>
+    </form>
 
-    <script>
-        function uploadFirmware() {
-            var input = document.getElementById('firmwareInput');
-            var file = input.files[0];
-
-            if (file) {
-                var formData = new FormData();
-                formData.append('file', file);
-
-                fetch('https://api.github.com/repos/whaleseai7/tel-home/contents/firmware.bin', {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': 'Bearer accesstoken',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        message: 'Upload firmware',
-                        committer: {
-                            name: 'Your Name',
-                            email: 'your.email@example.com'
-                        },
-                        content: btoa(unescape(encodeURIComponent(file))),
-                        branch: 'main'
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('status').innerText = 'Firmware berhasil diunggah!';
-                    console.log(data);
-                })
-                .catch(error => {
-                    document.getElementById('status').innerText = 'Gagal mengunggah firmware.';
-                    console.error(error);
-                });
-            } else {
-                document.getElementById('status').innerText = 'Pilih file firmware terlebih dahulu.';
-            }
-        }
-    </script>
+    <script src="upload.js"></script>
 </body>
 </html>
