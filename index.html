@@ -1,51 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GitHub File Upload</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unggah File .bin</title>
 </head>
 <body>
-  <input type="file" id="fileInput" />
-  <button onclick="uploadFile()">Upload File1</button>
+    <h1>Unggah File .bin</h1>
+    <form id="uploadForm">
+        <label for="fileInput">Pilih file .bin:</label>
+        <input type="file" id="fileInput" accept=".bin" required>
+        <button type="button" onclick="uploadFile()">Unggah</button>
+    </form>
 
-  <script>
-    function uploadFile() {
-      const fileInput = document.getElementById('fileInput');
-      const file = fileInput.files[0];
-
-      if (file) {
-        const apiUrl = 'https://github.com/whaleseai7/tel-home.git';
-        const token = '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'; // Replace with your GitHub token
-
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          const content = event.target.result;
-          
-          const formData = new FormData();
-          formData.append('file', new Blob([content], { type: file.type }));
-
-          fetch(apiUrl, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-            body: formData,
-          })
-          .then(response => response.json())
-          .then(data => {
-            console.log('File uploaded successfully:', data);
-          })
-          .catch(error => {
-            console.error('Error uploading file:', error);
-          });
-        };
-
-        reader.readAsArrayBuffer(file);
-      } else {
-        console.error('No file selected.');
-      }
-    }
-  </script>
+    <script src="upload.js"></script>
 </body>
 </html>
