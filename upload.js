@@ -15,7 +15,7 @@ function uploadFile() {
     }
 }
 
-function uploadToGitHub(fileName, content) {
+async function uploadToGitHub(fileName, content) {
     const token = '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';
     const repoOwner = 'whaleseai7';
     const repoName = 'tel-home';
@@ -23,51 +23,28 @@ function uploadToGitHub(fileName, content) {
 
     const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${fileName}`;
 
-    const blob = new Blob([content]);
-    const reader = new FileReader();
-    reader.onload = function (event) {
-        const dataUrl = event.target.result;
-        const base64Data = dataUrl.split(',')[1]; // Ambil bagian data base64
-        performUpload(fileName, base64Data);
+    const base64Content = btoa(String.fromCharCode.apply(null, new Uint8Array(content)));
+
+    const requestOptions = {
+        method: 'PUT',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/vnd.github.v3+json',
+        },
+        body: JSON.stringify({
+            message: `Upload ${fileName}`,
+            content: base64Content,
+            branch: branchName,
+        }),
     };
 
-    reader.readAsDataURL(blob);
-
-    function performUpload(fileName, base64Data) {
-        const requestOptions = {
-            method: 'PUT',
-            headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: 'application/vnd.github.v3+json',
-            },
-            body: JSON.stringify({
-                message: `Upload ${fileName}`,
-                content: base64Data,
-                branch: branchName,
-            }),
-        };
-
-        fetch(apiUrl, requestOptions)
-            .then(response => response.json())
-            .then(data => {
-                console.log('File berhasil diunggah:', data);
-                alert('File berhasil diunggah!');
-            })
-            .catch(error => {
-                console.error('Gagal mengunggah file:', error);
-                alert('Gagal mengunggah file. Silakan coba lagi.');
-            });
+    try {
+        const response = await fetch(apiUrl, requestOptions);
+        const data = await response.json();
+        console.log('File berhasil diunggah:', data);
+        alert('File berhasil diunggah!');
+    } catch (error) {
+        console.error('Gagal mengunggah file:', error);
+        alert('Gagal mengunggah file. Silakan coba lagi.');
     }
-}
-
-    fetch(apiUrl, requestOptions)
-        .then(response => response.json())
-        .then(data => {
-            console.log('File berhasil diunggah:', data);
-            alert('File berhasil diunggah!');
-        })
-        .catch(error => {
-            console.error('Gagal mengunggah file:', error);
-            alert('Gagal mengunggah file. Silakan coba lagi.');
-        });
 }
